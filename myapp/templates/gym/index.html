@@ -1,0 +1,196 @@
+{% extends 'gym/base.html' %}
+
+{% block title %}Gym Strong | Home{% endblock %}
+
+{% block content %}
+
+<section class="relative bg-gray-800 py-32 lg:py-48 flex items-center justify-center text-center px-4 overflow-hidden">
+    <div id="hero-bg-secondary" class="absolute inset-0 bg-cover bg-center opacity-30 transition-opacity duration-75 ease-out z-10" style="background-image: url('/media/products/background.png');"></div>
+
+    <div class="relative z-10 max-w-3xl mx-auto">
+        <span class="text-orange-500 font-bold uppercase tracking-widest text-sm">No Excuses. Just Results.</span>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white mt-4 mb-6">
+            BUILD YOUR <span class="text-orange-500 bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">LEGACY</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
+            State-of-the-art equipment, expert coaches, and a community dedicated to crushing goals. Your transformation starts today.
+        </p>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="#features" class="bg-orange-500 hover:bg-orange-600 text-white font-bold text-lg py-4 px-8 rounded-md transition duration-300 shadow-lg shadow-orange-500/20">
+                Features
+            </a>
+            <a href="#pricing" class="bg-orange-500 hover:bg-orange-600 text-white font-bold text-lg py-4 px-8 rounded-md transition duration-300 shadow-lg shadow-orange-500/20">
+                Pricing
+            </a>
+            <a href="#contact" class="bg-orange-500 hover:bg-orange-600 text-white font-bold text-lg py-4 px-8 rounded-md transition duration-300 shadow-lg shadow-orange-500/20">
+                Contact
+            </a>
+        </div>
+    </div>
+</section>
+
+<section id="features" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Why Choose Gym Strong?</h2>
+        <p class="text-gray-400 max-w-xl mx-auto">We provide everything you need to unlock your ultimate potential.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-gray-800/50 p-8 rounded-2xl border border-gray-800 hover:border-orange-500/50 transition duration-300">
+            <div class="w-12 h-12 bg-orange-500/10 text-orange-500 rounded-xl flex items-center justify-center mb-6 font-bold text-xl">🏋️‍♂️</div>
+            <h3 class="text-xl font-bold mb-3">Elite Equipment</h3>
+            <p class="text-gray-400">Top-tier strength, cardio, and functional training gear tailored for all fitness levels.</p>
+        </div>
+        <div class="bg-gray-800/50 p-8 rounded-2xl border border-gray-800 hover:border-orange-500/50 transition duration-300">
+            <div class="w-12 h-12 bg-orange-500/10 text-orange-500 rounded-xl flex items-center justify-center mb-6 font-bold text-xl">📋</div>
+            <h3 class="text-xl font-bold mb-3">Expert Coaching</h3>
+            <p class="text-gray-400">Certified personal trainers ready to build custom programs and keep you accountable.</p>
+        </div>
+        <div class="bg-gray-800/50 p-8 rounded-2xl border border-gray-800 hover:border-orange-500/50 transition duration-300">
+            <div class="w-12 h-12 bg-orange-500/10 text-orange-500 rounded-xl flex items-center justify-center mb-6 font-bold text-xl">🕒</div>
+            <h3 class="text-xl font-bold mb-3">24/7 Access</h3>
+            <p class="text-gray-400">Your schedule shouldn't dictate your fitness. Train whenever inspiration strikes.</p>
+        </div>
+    </div>
+</section>
+
+<section id="pricing" class="bg-gray-950 py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Memberships Built For You</h2>
+            <p class="text-gray-400 max-w-xl mx-auto">No hidden fees. Cancel or change your plan at any time.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {% for item in memberships %}
+            <div class="bg-gray-900 border {% if forloop.counter == 2 %}border-2 border-orange-500 relative shadow-xl shadow-orange-500/10{% else %}border-gray-800{% endif %} rounded-2xl p-8 flex flex-col justify-between relative">
+
+                {% if user.is_superuser %}
+                <a href="{% url 'delete_membership_action' item.id %}" onclick="return confirm('Дали сте сигурни дека сакате да го избришете ова членство?')" class="absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-2 py-1 rounded transition z-20">
+                    Избриши 🗑️
+                </a>
+                {% endif %}
+
+                {% if forloop.counter == 2 %}
+                <span class="absolute top-0 right-6 transform -translate-y-1/2 bg-orange-500 text-white text-xs font-bold uppercase tracking-widest py-1 px-3 rounded-full">Most Popular</span>
+                {% endif %}
+                <div>
+                    <h3 class="text-lg font-bold {% if forloop.counter == 2 %}text-orange-500{% else %}text-gray-400{% endif %} uppercase tracking-wider">{{ item.name }}</h3>
+                    <div class="mt-4 flex items-baseline text-white">
+                        <span class="text-4xl font-extrabold tracking-tight">{{ item.price }}</span>
+                        <span class="ml-1 text-lg font-semibold text-gray-400">ДЕН</span>
+                    </div>
+                    <p class="mt-6 text-gray-400 text-sm leading-relaxed">{{ item.description }}</p>
+                </div>
+
+                <div class="mt-8">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'checkout' %}?membership_id={{ item.id }}" class="block text-center w-full {% if forloop.counter == 2 %}bg-orange-500 hover:bg-orange-600{% else %}bg-gray-800 hover:bg-gray-700{% endif %} text-white font-bold py-3 px-4 rounded-md transition duration-300">
+                        Select Plan
+                    </a>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="block text-center w-full bg-gray-800 text-gray-500 font-bold py-3 px-4 rounded-md border border-gray-700 cursor-not-allowed">
+                        🔒 Login to Purchase
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-500 italic col-span-full text-center">No membership plans found in database.</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% if user.is_superuser %}
+    <section class="mt-8 bg-gray-800 border border-orange-500/30 p-6 rounded-2xl max-w-xl mx-auto">
+        <h3 class="text-lg font-bold text-orange-500 mb-4 flex items-center gap-2">🛠️ Admin Panel: Add New Membership Plan</h3>
+        <form method="POST" action="{% url 'add_membership_action' %}" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs text-gray-400 font-semibold mb-1">Membership Name</label>
+                <input type="text" name="name" required class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none focus:border-orange-500">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-400 font-semibold mb-1">Description</label>
+                <textarea name="description" required class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none focus:border-orange-500 h-20"></textarea>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-400 font-semibold mb-1">Price (ДЕН / monthly)</label>
+                <input type="number" name="price" required class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-white outline-none focus:border-orange-500">
+            </div>
+            <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-lg transition">Save Membership</button>
+        </form>
+    </section>
+    {% endif %}
+</section>
+
+<section id="contact" class="py-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-gray-800">
+    <div class="mb-12">
+        <span class="text-orange-500 font-bold uppercase tracking-widest text-sm">Contact</span>
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white mt-2">Contact Information</h2>
+        <p class="text-gray-400 mt-2 max-w-xl">Have questions about our products or services? Send us a message and we will get back to you as soon as possible.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
+        <div class="lg:col-span-2 space-y-8">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 bg-orange-500/10 text-orange-500 rounded-xl flex items-center justify-center font-bold text-lg shrink-0">📍</div>
+                <div>
+                    <h4 class="text-white font-bold text-base">Address</h4>
+                    <p class="text-gray-400 text-sm mt-1">33A Aco Karamanov St, Skopje</p>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 bg-orange-500/10 text-orange-500 rounded-xl flex items-center justify-center font-bold text-lg shrink-0">📞</div>
+                <div>
+                    <h4 class="text-white font-bold text-base">Phone</h4>
+                    <p class="text-gray-400 text-sm mt-1">+389 77 878 952</p>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 bg-orange-500/10 text-orange-500 rounded-xl flex items-center justify-center font-bold text-lg shrink-0">✉️</div>
+                <div>
+                    <h4 class="text-white font-bold text-base">Email</h4>
+                    <p class="text-gray-400 text-sm mt-1">info@gymstrong.com</p>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 bg-orange-500/10 text-orange-500 rounded-xl flex items-center justify-center font-bold text-lg shrink-0">🕒</div>
+                <div>
+                    <h4 class="text-white font-bold text-base">Working Hours</h4>
+                    <p class="text-gray-400 text-sm mt-1">Monday - Friday: 9:00 AM - 6:00 PM</p>
+                    <p class="text-gray-400 text-sm">Saturday: 10:00 AM - 4:00 PM</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-3 bg-gray-800/40 border border-gray-800 p-8 rounded-2xl shadow-xl">
+            <h3 class="text-xl font-bold text-white mb-6">Send Us a Message</h3>
+            <form action="#" method="POST" class="space-y-5" onsubmit="event.preventDefault(); alert('Your message has been sent successfully!'); this.reset();">
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Name</label>
+                    <input type="text" placeholder="Your name" required class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition placeholder-gray-600 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Email</label>
+                    <input type="email" placeholder="Your email" required class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition placeholder-gray-600 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Subject</label>
+                    <input type="text" placeholder="Subject" required class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition placeholder-gray-600 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Message</label>
+                    <textarea placeholder="Your message" required rows="4" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition placeholder-gray-600 text-sm"></textarea>
+                </div>
+                <button type="submit" class="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-xl transition duration-300 shadow-lg shadow-orange-500/20">
+                    Send Message
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

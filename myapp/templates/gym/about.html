@@ -1,0 +1,121 @@
+{% extends 'gym/base.html' %}
+
+{% block title %}About Us | Gym Strong{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+    <div class="text-center mb-20">
+        <span class="text-orange-500 font-bold uppercase tracking-widest text-xs px-3 py-1.5 bg-orange-500/10 rounded-full">Our Story & Legacy</span>
+        <h1 class="text-4xl md:text-5xl font-black tracking-tight text-white mt-4">
+            WE BUILD <span class="text-orange-500">CHAMPIONS</span>
+        </h1>
+        <p class="text-gray-400 mt-4 max-w-3xl mx-auto text-base md:text-lg leading-relaxed">
+            More than just a gym. We are a community built on sweat, discipline, and unwavering commitment. From beginners to professional athletes, we provide an environment where goals become reality.
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-24">
+        <div class="bg-gradient-to-br from-gray-900 to-gray-800/60 border border-gray-800 p-8 rounded-3xl shadow-xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-6 opacity-10 text-7xl font-bold text-orange-500 select-none">01</div>
+            <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                <span class="text-orange-500">🎯</span> Our Mission
+            </h3>
+            <p class="text-gray-400 text-sm leading-relaxed">
+                To inspire every individual to reach their maximum physical and mental potential through superior guidance, premium supplementation, and uncompromising fitness conditions.
+            </p>
+        </div>
+        <div class="bg-gradient-to-br from-gray-900 to-gray-800/60 border border-gray-800 p-8 rounded-3xl shadow-xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-6 opacity-10 text-7xl font-bold text-orange-500 select-none">02</div>
+            <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                <span class="text-orange-500">👁️‍🗨️</span> Our Vision
+            </h3>
+            <p class="text-gray-400 text-sm leading-relaxed">
+                To be the leading fitness brand in the region, recognized for innovation in training, education on a healthy lifestyle, and creating long-lasting life transformations.
+            </p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-28">
+        <div class="bg-gray-950/40 border border-gray-800/80 p-6 rounded-2xl text-center">
+            <h3 class="text-4xl font-black text-white bg-gradient-to-r from-orange-500 to-red-500 text-transparent bg-clip-text">1500㎡</h3>
+            <p class="text-gray-500 text-xs uppercase tracking-wider font-semibold mt-2">Premium Space</p>
+        </div>
+        <div class="bg-gray-950/40 border border-gray-800/80 p-6 rounded-2xl text-center">
+            <h3 class="text-4xl font-black text-white bg-gradient-to-r from-orange-500 to-red-500 text-transparent bg-clip-text">50+</h3>
+            <p class="text-gray-500 text-xs uppercase tracking-wider font-semibold mt-2">Elite Machines</p>
+        </div>
+        <div class="bg-gray-950/40 border border-gray-800/80 p-6 rounded-2xl text-center">
+            <h3 class="text-4xl font-black text-white bg-gradient-to-r from-orange-500 to-red-500 text-transparent bg-clip-text">2000+</h3>
+            <p class="text-gray-500 text-xs uppercase tracking-wider font-semibold mt-2">Active Members</p>
+        </div>
+        <div class="bg-gray-950/40 border border-gray-800/80 p-6 rounded-2xl text-center">
+            <h3 class="text-4xl font-black text-white bg-gradient-to-r from-orange-500 to-red-500 text-transparent bg-clip-text">100%</h3>
+            <p class="text-gray-500 text-xs uppercase tracking-wider font-semibold mt-2">Certified Team</p>
+        </div>
+    </div>
+
+    <div class="mb-12">
+        <div class="text-center md:text-left mb-10">
+            <h2 class="text-3xl font-black text-white tracking-tight">
+                MEET OUR <span class="text-orange-500">ELITE COACHES</span>
+            </h2>
+            <p class="text-gray-400 text-sm mt-1">Certified professionals dedicated to your success.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+            <div class="bg-gray-950 border border-gray-800 rounded-3xl overflow-hidden group hover:border-orange-500/40 transition duration-300 shadow-xl flex flex-col justify-between">
+                <div class="h-72 w-full bg-gray-900 relative overflow-hidden flex items-center justify-center">
+                    <img src="../../../media/luge/marko.png" alt="Marko Petrovski" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition duration-500 ease-out">
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-60"></div>
+                </div>
+                <div class="p-6 bg-gray-950 border-t border-gray-900">
+                    <h4 class="font-bold text-white text-lg group-hover:text-orange-500 transition duration-200">Marko Petrovski</h4>
+                    <p class="text-xs text-orange-500 font-bold tracking-widest uppercase mt-1">Head Fitness Coach</p>
+                    <p class="text-gray-400 text-xs mt-3 leading-relaxed">Specialist in hypertrophy, advanced bodybuilding, and long-term transformations.</p>
+                </div>
+            </div>
+
+            <div class="bg-gray-950 border border-gray-800 rounded-3xl overflow-hidden group hover:border-orange-500/40 transition duration-300 shadow-xl flex flex-col justify-between">
+                <div class="h-72 w-full bg-gray-900 relative overflow-hidden">
+                    <img src="../../../media/luge/elena.png" alt="Elena Stojanova" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition duration-500 ease-out">
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-60"></div>
+                </div>
+                <div class="p-6 bg-gray-950 border-t border-gray-900">
+                    <h4 class="font-bold text-white text-lg group-hover:text-orange-500 transition duration-200">Elena Stojanova</h4>
+                    <p class="text-xs text-orange-500 font-bold tracking-widest uppercase mt-1">HIIT & Cardio Expert</p>
+                    <p class="text-gray-400 text-xs mt-3 leading-relaxed">Master of conditioning, rapid fat loss, group workouts, and high-intensity motivation.</p>
+                </div>
+            </div>
+
+            <div class="bg-gray-950 border border-gray-800 rounded-3xl overflow-hidden group hover:border-orange-500/40 transition duration-300 shadow-xl flex flex-col justify-between">
+                <div class="h-72 w-full bg-gray-900 relative overflow-hidden">
+                    <img src="../../../media/luge/stefan.png" alt="Stefan Nikolov" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition duration-500 ease-out">
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-60"></div>
+                </div>
+                <div class="p-6 bg-gray-950 border-t border-gray-900">
+                    <h4 class="font-bold text-white text-lg group-hover:text-orange-500 transition duration-200">Stefan Nikolov</h4>
+                    <p class="text-xs text-orange-500 font-bold tracking-widest uppercase mt-1">Nutrition Specialist</p>
+                    <p class="text-gray-400 text-xs mt-3 leading-relaxed">Professional metabolism analysis and formulation of highly precise dietary plans.</p>
+                </div>
+            </div>
+
+            <div class="bg-gray-950 border border-gray-800 rounded-3xl overflow-hidden group hover:border-orange-500/40 transition duration-300 shadow-xl flex flex-col justify-between">
+                <div class="h-72 w-full bg-gray-900 relative overflow-hidden">
+                    <img src="../../../media/luge/marija.jpg" alt="Marija Dimitrova" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition duration-500 ease-out">
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-60"></div>
+                </div>
+                <div class="p-6 bg-gray-950 border-t border-gray-900">
+                    <h4 class="font-bold text-white text-lg group-hover:text-orange-500 transition duration-200">Marija Dimitrova</h4>
+                    <p class="text-xs text-orange-500 font-bold tracking-widest uppercase mt-1">CrossFit Instructor</p>
+                    <p class="text-gray-400 text-xs mt-3 leading-relaxed">Expert in functional strength, weightlifting, extreme endurance, and peak performance.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

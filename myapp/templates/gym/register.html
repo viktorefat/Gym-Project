@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрација | Gym Strong</title>
+    <script src="https://cdn.tailwindcss.com\"></script>
+    <style>
+        p input {
+            width: 100%;
+            background-color: #111827;
+            border: 1px solid #374151;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: white;
+            margin-top: 0.25rem;
+            margin-bottom: 1rem;
+            outline: none;
+        }
+        p input:focus { border-color: #f97316; }
+        p label { font-size: 0.875rem; color: #9ca3af; font-weight: 500;}
+        .errorlist { color: #f87171; font-size: 0.75rem; margin-bottom: 0.5rem; list-style: square; padding-left: 1rem;}
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen flex items-center justify-center p-4">
+<div class="max-w-md w-full bg-gray-900 border border-gray-800 p-8 rounded-2xl shadow-2xl">
+    <div class="text-center mb-6">
+        <span class="text-3xl font-black text-orange-500 tracking-wider">GYM STRONG</span>
+        <h2 class="text-xl font-bold mt-2 text-white">Create a New Profile</h2>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+            {{ form.non_field_errors }}
+        {% endif %}
+
+        <p>
+            <label for="id_username">Username *</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </p>
+
+        <p>
+            <label for="id_email">Email Address *</label>
+            {{ form.email }}
+            {{ form.email.errors }}
+        </p>
+
+        <div class="grid grid-cols-2 gap-4">
+            <p>
+                <label for="id_first_name">First Name</label>
+                {{ form.first_name }}
+            </p>
+            <p>
+                <label for="id_last_name">Last Name</label>
+                {{ form.last_name }}
+            </p>
+        </div>
+
+        <p>
+            <label for="id_phone">Phone Number</label>
+            {{ form.phone }}
+        </p>
+
+        <p>
+            <label for="id_password">Password *</label>
+            {{ form.password }}
+            {{ form.password.errors }}
+        </p>
+
+        <p>
+            <label for="id_password_confirm">Confirm Password *</label>
+            {{ form.password_confirm }}
+            {{ form.password_confirm.errors }}
+        </p>
+
+        <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-xl mt-4 transition duration-300 shadow-lg shadow-orange-500/20">
+            Register Account
+        </button>
+    </form>
+
+    <div class="text-center mt-6 text-sm text-gray-400">
+        Already have an account? <a href="{% url 'login' %}" class="text-orange-500 hover:underline font-medium">Log In</a>
+    </div>
+</div>
+</body>
+</html>

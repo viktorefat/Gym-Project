@@ -1,0 +1,144 @@
+{% extends 'gym/base.html' %}
+
+{% block title %}Gym Strong | My Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    
+    <div class="mb-8 border-b border-gray-800 pb-4 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">
+                MY <span class="text-orange-500">PROFILE</span>
+            </h1>
+            <p class="text-gray-400 text-sm mt-1">Manage your account details and view your subscription status.</p>
+        </div>
+        <button id="edit-profile-btn" onclick="enableProfileEdit()" type="button" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-5 rounded-xl border border-gray-700 transition flex items-center gap-2 text-sm">
+            ✏️ Edit Profile
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <div class="bg-gray-800/40 border border-gray-800 rounded-2xl p-6 text-center flex flex-col items-center justify-center h-fit">
+            
+            <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-orange-500 shadow-lg shadow-orange-500/20 mb-4 flex items-center justify-center bg-gray-900">
+                {% if profile.avatar %}
+                    <img id="avatar-preview" src="{{ profile.avatar.url }}" alt="Profile" class="w-full h-full object-cover">
+                {% else %}
+                    <span id="avatar-placeholder" class="text-white text-3xl font-bold uppercase">{{ user.username|slice:":1" }}</span>
+                    <img id="avatar-preview" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                {% endif %}
+            </div>
+
+            <h2 class="text-xl font-bold text-white">{{ user.username }}</h2>
+            <p class="text-gray-400 text-xs mt-1">{{ user.email|default:"No email provided" }}</p>
+            
+            {% if user.is_superuser %}
+            <span class="mt-4 px-3 py-1 bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold rounded-full uppercase tracking-widest">
+                Administrator
+            </span>
+            {% else %}
+            <span class="mt-4 px-3 py-1 bg-orange-500/10 text-orange-400 border border-orange-500/20 text-xs font-bold rounded-full uppercase tracking-widest">
+                Gym Member
+            </span>
+            {% endif %}
+        </div>
+
+        <div class="md:col-span-2 bg-gray-800/40 border border-gray-800 rounded-2xl p-6 space-y-6">
+            <h3 class="text-lg font-bold text-white border-b border-gray-800/80 pb-2">Profile Information</h3>
+            
+            <form id="profile-form" method="POST" enctype="multipart/form-data" class="space-y-4">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-gray-400 font-semibold mb-1">First Name</label>
+                        {{ form.first_name }}
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 font-semibold mb-1">Last Name</label>
+                        {{ form.last_name }}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-gray-400 font-semibold mb-1">Email Address</label>
+                        {{ form.email }}
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 font-semibold mb-1">Phone Number</label>
+                        {{ form.phone }}
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-gray-400 font-semibold mb-1">Membership Status</label>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3 rounded-xl {% if profile.membership_status == 'Active' %}bg-green-500/5 border border-green-500/20{% else %}bg-orange-500/5 border border-orange-500/20{% endif %}">
+                        <p class="{% if profile.membership_status == 'Active' %}text-green-400{% else %}text-orange-400{% endif %} font-bold text-sm">
+                            {% if profile.membership_status == 'Active' %}
+                                Активно членство: <span class="text-white font-extrabold ml-1">{{ profile.membership_plan }}</span>
+                            {% else %}
+                                Нема активно членство
+                            {% endif %}
+                        </p>
+                        
+                        {% if profile.membership_status == 'Active' %}
+                        <a href="{% url 'cancel_membership' %}" onclick="return confirm('Дали сте сигурни дека сакате да го откажете вашето членство?')" class="bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 text-xs font-bold px-4 py-2 rounded-xl transition duration-300 text-center">
+                            Cancel Membership 
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div id="avatar-upload-wrapper" class="hidden">
+                    <label class="block text-xs text-gray-400 font-semibold mb-1">Change Profile Image</label>
+                    <div class="mt-1 bg-gray-900 border border-gray-700 rounded-lg p-2">
+                        {{ form.avatar }}
+                    </div>
+                </div>
+
+                <button id="save-changes-btn" type="submit" class="hidden w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-orange-500/20 text-sm">
+                    Save Changes
+                </button>
+            </form>
+
+            <div class="pt-4 border-t border-gray-800 flex justify-between text-xs text-gray-500">
+                <span>Member since: <strong>{{ user.date_joined|date:"M d, Y" }}</strong></span>
+                <span>Last login: <strong>{{ user.last_login|date:"M d, Y H:i" }}</strong></span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+function enableProfileEdit() {
+    const fields = document.querySelectorAll('.profile-field');
+    fields.forEach(field => field.removeAttribute('disabled'));
+
+    document.getElementById('avatar-upload-wrapper').classList.remove('hidden');
+    document.getElementById('save-changes-btn').classList.remove('hidden');
+    document.getElementById('edit-profile-btn').classList.add('hidden');
+    
+    const avatarInput = document.querySelector('input[type="file"]');
+    if (avatarInput) {
+        avatarInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewImg = document.getElementById('avatar-preview');
+                    const placeholder = document.getElementById('avatar-placeholder');
+                    
+                    previewImg.src = e.target.result;
+                    previewImg.classList.remove('hidden');
+                    if (placeholder) placeholder.classList.add('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

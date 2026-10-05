@@ -1,0 +1,132 @@
+{% extends 'gym/base.html' %}
+
+{% block title %}Checkout | Gym Strong{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-12">
+    
+    <div class="flex items-center justify-between border-b border-gray-800 pb-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-white tracking-tight">
+                CHECKOUT <span class="text-orange-500">PROCESS</span>
+            </h1>
+            <p class="text-gray-400 text-sm mt-1">Please fill in your details to finalize your order.</p>
+        </div>
+        <a href="{% url 'supplements_page' %}" class="text-sm text-gray-400 hover:text-orange-500 transition flex items-center gap-1">
+            ← Back to Shop
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 space-y-6">
+            <form method="POST" action="{{ request.get_full_path }}" class="space-y-6">
+                {% csrf_token %}
+                
+                <div class="bg-gray-900 border border-gray-800 p-6 md:p-8 rounded-2xl shadow-xl">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">📍 Shipping Information</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">First Name</label>
+                            <input type="text" name="first_name" value="{{ user.first_name }}" required class="w-full bg-gray-950 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Last Name</label>
+                            <input type="text" name="last_name" value="{{ user.last_name }}" required class="w-full bg-gray-950 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm">
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Address</label>
+                        <input type="text" name="address" placeholder="e.g. Partizanski Odredi 23" required class="w-full bg-gray-950 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm placeholder-gray-700">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">City</label>
+                            <input type="text" name="city" placeholder="Skopje" required class="w-full bg-gray-950 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm placeholder-gray-700">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Phone Number</label>
+                            <input type="text" name="phone" value="{{ profile.phone }}" required class="w-full bg-gray-950 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-900 border border-gray-800 p-6 md:p-8 rounded-2xl shadow-xl">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">💳 Payment Method</h3>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Cardholder Name</label>
+                        <input type="text" required class="w-full bg-gray-950 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm">
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Card Number</label>
+                        <input type="text" placeholder="ffff-ffff-ffff-ffff" maxlength="19" required class="w-full bg-gray-950 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm placeholder-gray-700">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">Expiration Date</label>
+                            <input type="text" placeholder="MM/YY" maxlength="5" required class="w-full bg-gray-950 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm placeholder-gray-700">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-wider text-gray-400 font-bold mb-2">CVV</label>
+                            <input type="password" placeholder="***" maxlength="3" required class="w-full bg-gray-950 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm placeholder-gray-700">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl transition duration-300 shadow-lg shadow-orange-500/20 text-base uppercase tracking-wider">
+                    Submit Order & Pay
+                </button>
+            </form>
+        </div>
+
+        <div class="space-y-6">
+            <div class="bg-gray-900 border border-gray-800 p-6 rounded-2xl shadow-xl sticky top-24">
+                <h3 class="text-lg font-bold text-white mb-4 border-b border-gray-800 pb-3 flex items-center justify-between">
+                    <span>Order Summary</span>
+                    <span class="text-xs bg-gray-800 px-2.5 py-1 rounded-md text-gray-400 font-normal">{{ cart_items|length }} items</span>
+                </h3>
+
+                <div class="divide-y divide-gray-800 max-h-[300px] overflow-y-auto pr-2 space-y-3">
+                    {% if direct_membership %}
+
+                    <div class="pt-3 first:pt-0 flex justify-between items-start gap-4">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-white text-sm tracking-wide line-clamp-1">{{ direct_membership.name }}</h4>
+                            <p class="text-xs text-gray-500 mt-0.5">Qty: 1 × {{ direct_membership.price }} MKD</p>
+                        </div>
+                        <span class="text-sm font-bold text-gray-300 whitespace-nowrap">
+                            {{ direct_membership.price }} MKD
+                        </span>
+                    </div>
+                    {% else %}
+
+                    {% for item in cart_items %}
+                    <div class="pt-3 first:pt-0 flex justify-between items-start gap-4">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-white text-sm tracking-wide line-clamp-1">{{ item.product.name }}</h4>
+                            <p class="text-xs text-gray-500 mt-0.5">Qty: {{ item.quantity }} × {{ item.product.price }} MKD</p>
+                        </div>
+                        <span class="text-sm font-bold text-gray-300 whitespace-nowrap">
+                            {% widthratio item.product.price 1 item.quantity %} MKD
+                        </span>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="border-t border-gray-800 mt-6 pt-4 space-y-2">
+                    <div class="flex justify-between text-xs text-gray-400">
+                        <span>Shipping</span>
+                        <span class="text-green-400 font-medium">FREE</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-2">
+                        <span class="text-sm font-bold text-white">Total to Pay:</span>
+                        <span class="text-2xl font-black text-orange-500">{{ total }} MKD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

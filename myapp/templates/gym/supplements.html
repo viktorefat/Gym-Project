@@ -1,0 +1,395 @@
+{% extends 'gym/base.html' %}
+
+{% block title %}Gym Strong | Supplements Shop{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-extrabold tracking-tight text-white">
+            SUPPLEMENTS <span class="text-orange-500">SHOP</span>
+        </h1>
+        <p class="text-gray-400 mt-2 mb-6">Fuel your body with the highest quality supplements on the market.</p>
+        
+        <div class="relative max-w-md mx-auto z-40">
+            <input type="text" id="search-input" placeholder="Search supplements..." 
+                   class="w-full bg-gray-900 border border-gray-750 text-white rounded-xl px-4 py-3 outline-none focus:border-orange-500 transition text-sm shadow-inner">
+            <div id="suggestions-box" class="absolute left-0 right-0 mt-1 bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-2xl hidden max-h-60 overflow-y-auto">
+                </div>
+        </div>
+    </div>
+
+    {% if user.is_superuser %}
+    <section class="mb-12 bg-gray-800 border border-orange-500/30 p-6 rounded-2xl max-w-xl mx-auto">
+        <h3 class="text-lg font-bold text-orange-500 mb-4 flex items-center gap-2">🛠️ Admin Panel: Add New Product</h3>
+        <form method="POST" action="{% url 'add_product_action' %}" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs text-gray-400 font-semibold mb-1">Product Name</label>
+                <input type="text" name="name" required class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-400 font-semibold mb-1">Price (MKD)</label>
+                <input type="number" name="price" required class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-400 font-semibold mb-1">Description</label>
+                <textarea name="description" rows="3" required class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm"></textarea>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-400 font-semibold mb-1">Product Image</label>
+                <input type="file" name="image" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-orange-500 hover:file:bg-gray-600">
+            </div>
+            <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-orange-500/20">
+                Add Product
+            </button>
+        </form>
+    </section>
+    {% endif %}
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for supplement in supplements %}
+        <div class="product-card bg-gray-900 border border-gray-800 rounded-2xl p-5 flex flex-col justify-between hover:border-gray-700 transition duration-300 shadow-xl group" data-name="{{ supplement.name|lower }}">
+            <div onclick="openModal('{{ supplement.id }}', '{{ supplement.name|escapejs }}', '{{ supplement.price }}', '{{ supplement.description|escapejs }}', '{% if supplement.image %}{{ supplement.image.url }}{% else %}none{% endif %}', '{{ user.is_authenticated }}')" class="cursor-pointer">
+                
+                <div class="w-full aspect-square bg-gray-950 rounded-xl mb-4 overflow-hidden flex items-center justify-center border border-gray-800/50 relative">
+                    {% if supplement.image %}
+                        <img src="{{ supplement.image.url }}" alt="{{ supplement.name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    {% else %}
+                        <span class="text-4xl text-gray-700">🫙</span>
+                    {% endif %}
+                </div>
+                
+                <h3 class="font-bold text-white text-lg tracking-wide group-hover:text-orange-500 transition duration-300 line-clamp-1">{{ supplement.name }}</h3>
+                <p class="text-xs text-gray-500 mt-1 line-clamp-2">{{ supplement.description }}</p>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-gray-800/60 flex items-center justify-between gap-2">
+                <span class="text-xl font-black text-orange-500">{{ supplement.price }} <span class="text-xs font-normal text-gray-500">MKD</span></span>
+                
+                <div class="flex items-center gap-2">
+                    {% if user.is_superuser %}
+                    <a href="{% url 'delete_product_action' supplement.id %}" onclick="return confirm('Дали сте сигурни дека сакате да го избришете овој производ?')" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2 rounded-xl border border-red-500/20 transition text-sm" title="Delete Product">
+                        🗑️
+                    </a>
+                    {% endif %}
+                    
+                    {% if user.is_authenticated %}
+                    <button type="button" data-name="{{ supplement.name }}" data-url="{% url 'add_to_cart' supplement.id %}" class="add-to-cart-btn bg-gray-800 hover:bg-orange-500 hover:text-white text-gray-300 p-2 px-3 rounded-xl border border-gray-700 transition text-sm font-bold flex items-center gap-1">
+                        + 🛒
+                    </button>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="bg-gray-800/40 text-gray-600 p-2 px-3 rounded-xl border border-gray-800 transition text-sm cursor-not-allowed" title="Log in to purchase">
+                        🔒
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center py-12">
+            <p class="text-gray-500">No supplements available at the moment.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="supplementModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden transition-opacity duration-300">
+    <div id="modalContainer" class="bg-gray-900 border border-gray-800 w-full max-w-xl rounded-2xl overflow-hidden transform scale-95 transition-transform duration-300 relative shadow-2xl flex flex-col max-h-[90vh]">
+        
+        <button onclick="closeModal()" class="absolute top-4 right-4 bg-gray-800 text-gray-400 hover:text-white w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold transition z-50 border border-gray-700">✕</button>
+        
+        <div class="overflow-y-auto p-6 md:p-8 space-y-6">
+            
+            <div id="modalViewMode" class="space-y-6">
+                
+                <div class="w-full h-64 md:h-80 bg-gray-950 rounded-2xl overflow-hidden flex items-center justify-center border border-gray-800/80 p-4 relative group/zoom">
+                    <img id="modalImage" src="" alt="" class="w-full h-full object-contain transition-transform duration-300 origin-center">
+                    <span id="modalPlaceholder" class="text-gray-700 text-7xl hidden">🫙</span>
+
+                    <div id="zoomControls" class="absolute bottom-3 right-3 flex gap-1.5 opacity-0 group-hover/zoom:opacity-100 transition-opacity duration-200 z-30">
+                        <button type="button" onclick="zoomImage(0.15)" class="bg-gray-900/80 hover:bg-orange-500 text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg border border-gray-700 transition" title="Zoom In">+</button>
+                        <button type="button" onclick="zoomImage(-0.15)" class="bg-gray-900/80 hover:bg-orange-500 text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-lg border border-gray-700 transition" title="Zoom Out">-</button>
+                        <button type="button" onclick="resetZoom()" class="bg-gray-900/80 hover:bg-gray-700 text-gray-300 w-8 h-8 rounded-lg flex items-center justify-center text-sm border border-gray-700 transition" title="Reset">🔄</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 id="modalName" class="text-2xl md:text-3xl font-black text-white tracking-wide mb-2"></h3>
+                    <div class="flex items-center gap-4 mt-2">
+                        <span id="modalPrice" class="text-2xl font-black text-orange-500"></span>
+                        <span class="text-xs font-semibold uppercase tracking-wider px-2 py-1 rounded bg-orange-500/10 text-orange-400">Premium Quality</span>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-800/80 pt-4">
+                    <h4 class="text-xs uppercase tracking-wider text-gray-500 font-bold mb-2">Detailed description for the product:</h4>
+                    <p id="modalDescription" class="text-gray-300 text-sm leading-relaxed text-justify whitespace-pre-wrap"></p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-800 justify-end">
+                    {% if user.is_superuser %}
+                    <button type="button" onclick="toggleEditMode(true)" class="bg-blue-600/15 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 font-bold px-6 py-3.5 rounded-xl transition text-sm">
+                        ✏️ Edit Product (Admin)
+                    </button>
+                    {% endif %}
+                    <button id="modalCartBtn" type="button" data-name="" data-url="" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-3.5 rounded-xl transition text-center shadow-lg shadow-orange-500/10"></button>
+                </div>
+            </div>
+
+            {% if user.is_superuser %}
+            <form id="modalEditMode" method="POST" action="" enctype="multipart/form-data" class="hidden space-y-4">
+                {% csrf_token %}
+                <h3 class="text-xl font-bold text-orange-500 mb-2">🛠️ Edit Product</h3>
+                
+                <div>
+                    <label class="block text-xs text-gray-400 font-semibold mb-1">Product Name</label>
+                    <input type="text" id="editName" name="name" required class="w-full bg-gray-950 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm">
+                </div>
+                
+                <div>
+                    <label class="block text-xs text-gray-400 font-semibold mb-1">Price (MKD)</label>
+                    <input type="number" id="editPrice" name="price" required class="w-full bg-gray-950 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm">
+                </div>
+                
+                <div>
+                    <label class="block text-xs text-gray-400 font-semibold mb-1">Description</label>
+                    <textarea id="editDescription" name="description" rows="4" required class="w-full bg-gray-950 border border-gray-700 rounded-xl p-3 text-white outline-none focus:border-orange-500 transition text-sm"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-xs text-gray-400 font-semibold mb-1">Change Product Image (Optional)</label>
+                    <input type="file" name="image" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-800 file:text-orange-500 hover:file:bg-gray-700">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 pt-4 border-t border-gray-800">
+                    <button type="button" onclick="toggleEditMode(false)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold py-3.5 rounded-xl transition text-sm">
+                        Cancel
+                    </button>
+                    <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3.5 rounded-xl transition text-sm shadow-lg shadow-orange-500/20">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<div id="toast-notification" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: none;" class="bg-gray-900 border-2 border-orange-500 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3">
+    <span class="text-xl">🛒</span>
+    <span id="toast-message" class="text-sm font-bold tracking-wide"></span>
+</div>
+
+<script>
+let currentProductData = {};
+let currentZoom = 1;
+
+function zoomImage(amount) {
+    const img = document.getElementById('modalImage');
+    if (!img) return;
+    currentZoom += amount;
+    if (currentZoom < 1) currentZoom = 1;
+    if (currentZoom > 3) currentZoom = 3;
+    img.style.transform = `scale(${currentZoom})`;
+}
+
+function resetZoom() {
+    const img = document.getElementById('modalImage');
+    if (!img) return;
+    currentZoom = 1;
+    img.style.transform = `scale(1)`;
+}
+
+function openModal(id, name, price, description, imageUrl, isAuthenticated) {
+    resetZoom();
+    const modal = document.getElementById('supplementModal');
+    const modalContainer = document.getElementById('modalContainer');
+    
+    currentProductData = { id, name, price, description, imageUrl };
+    
+    document.getElementById('modalName').innerText = name;
+    document.getElementById('modalPrice').innerText = price + " MKD";
+    document.getElementById('modalDescription').innerText = description;
+    
+    const imgEl = document.getElementById('modalImage');
+    const placeholderEl = document.getElementById('modalPlaceholder');
+    
+    if (imageUrl && imageUrl !== 'none') {
+        imgEl.src = imageUrl;
+        imgEl.alt = name;
+        imgEl.classList.remove('hidden');
+        placeholderEl.classList.add('hidden');
+    } else {
+        imgEl.classList.add('hidden');
+        placeholderEl.classList.remove('hidden');
+    }
+    
+    if (document.getElementById('editName')) {
+        document.getElementById('editName').value = name;
+        document.getElementById('editPrice').value = price;
+        document.getElementById('editDescription').value = description;
+        document.getElementById('modalEditMode').action = "/supplements/edit/" + id + "/";
+    }
+    
+    const cartBtn = document.getElementById('modalCartBtn');
+    if (isAuthenticated === 'True') {
+        cartBtn.setAttribute('data-url', "/cart/add/" + id + "/"); 
+        cartBtn.setAttribute('data-name', name); 
+        cartBtn.innerText = "Add to Cart 🛒";
+        cartBtn.className = "add-to-cart-btn bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-3.5 rounded-xl transition text-center shadow-lg shadow-orange-500/10";
+    } else {
+        cartBtn.removeAttribute('data-url');
+        cartBtn.removeAttribute('data-name');
+        cartBtn.innerText = "🔒 Најави се за купување";
+        cartBtn.className = "bg-gray-800 text-gray-400 font-bold px-8 py-3.5 rounded-xl border border-gray-700 text-center text-sm cursor-pointer hover:bg-gray-700 hover:text-white transition";
+        cartBtn.onclick = function() { window.location.href = "{% url 'login' %}"; };
+    }
+    
+    toggleEditMode(false);
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    
+    setTimeout(() => {
+        modalContainer.classList.remove('scale-95');
+        modalContainer.classList.add('scale-100');
+    }, 10);
+}
+
+function closeModal() {
+    resetZoom();
+    const modal = document.getElementById('supplementModal');
+    const modalContainer = document.getElementById('modalContainer');
+    modalContainer.classList.remove('scale-100');
+    modalContainer.classList.add('scale-95');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }, 200);
+}
+
+function toggleEditMode(showEdit) {
+    const viewMode = document.getElementById('modalViewMode');
+    const editMode = document.getElementById('modalEditMode');
+    if (!editMode) return;
+    if (showEdit) {
+        viewMode.classList.add('hidden');
+        editMode.classList.remove('hidden');
+    } else {
+        document.getElementById('editName').value = currentProductData.name;
+        document.getElementById('editPrice').value = currentProductData.price;
+        document.getElementById('editDescription').value = currentProductData.description;
+        editMode.classList.add('hidden');
+        viewMode.classList.remove('hidden');
+    }
+}
+
+document.getElementById('supplementModal').addEventListener('click', function(event) {
+    if (event.target === this) {
+        closeModal();
+    }
+});
+
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.add-to-cart-btn');
+    if (btn) {
+        e.preventDefault();
+        const url = btn.getAttribute('data-url');
+        const productName = btn.getAttribute('data-name') || "продуктот";
+        if (!url) return;
+
+        const toast = document.getElementById('toast-notification');
+        const toastMsg = document.getElementById('toast-message');
+        
+        if (toast && toastMsg) {
+            toastMsg.innerText = "Успешно додадовте " + productName + " во кошничката!";
+            toast.style.display = 'flex';
+
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2500);
+        }
+
+        fetch(url, {
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        }).catch(err => console.log("Позадинското додавање помина, но имаше редирект од Django"));
+        return;
+    }
+
+    const suggestionItem = e.target.closest('.suggestion-item');
+    if (suggestionItem) {
+        const name = suggestionItem.getAttribute('data-value');
+        const searchInput = document.getElementById("search-input");
+        const suggestionsBox = document.getElementById("suggestions-box");
+        const productCards = document.querySelectorAll(".product-card");
+
+        if (searchInput) searchInput.value = name;
+        if (suggestionsBox) suggestionsBox.classList.add("hidden");
+
+        productCards.forEach(card => {
+            const cardName = card.getAttribute("data-name");
+            if (cardName && cardName.trim() === name) {
+                card.classList.remove("hidden");
+            } else {
+                card.classList.add("hidden");
+            }
+        });
+        return;
+    }
+
+    const searchInput = document.getElementById("search-input");
+    const suggestionsBox = document.getElementById("suggestions-box");
+    if (searchInput && suggestionsBox && !searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+        suggestionsBox.classList.add("hidden");
+    }
+});
+
+document.addEventListener("input", function (e) {
+    if (e.target && e.target.id === "search-input") {
+        const query = e.target.value.toLowerCase().trim();
+        const suggestionsBox = document.getElementById("suggestions-box");
+        const productCards = document.querySelectorAll(".product-card");
+
+        if (!suggestionsBox) return;
+        suggestionsBox.innerHTML = "";
+
+        if (query === "") {
+            suggestionsBox.classList.add("hidden");
+            productCards.forEach(card => card.classList.remove("hidden"));
+            return;
+        }
+
+        const productNames = [];
+        productCards.forEach(card => {
+            const name = card.getAttribute("data-name");
+            if (name) {
+                const trimmedName = name.trim();
+                if (trimmedName.toLowerCase().includes(query)) {
+                    card.classList.remove("hidden");
+                    productNames.push(trimmedName);
+                } else {
+                    card.classList.add("hidden");
+                }
+            }
+        });
+
+        const uniqueNames = [...new Set(productNames)].slice(0, 5);
+
+        if (uniqueNames.length > 0) {
+            suggestionsBox.classList.remove("hidden");
+            uniqueNames.forEach(name => {
+                const item = document.createElement("div");
+                item.className = "suggestion-item px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-orange-500 cursor-pointer transition text-left capitalize";
+                item.setAttribute('data-value', name);
+                item.textContent = name;
+                suggestionsBox.appendChild(item);
+            });
+        } else {
+            suggestionsBox.classList.add("hidden");
+        }
+    }
+});
+</script>
+{% endblock %}
