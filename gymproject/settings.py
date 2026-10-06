@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-0+na__9b^8scjea*$y4!7c6pw5d95+1lei9qww30^c30+pvcyu
 DEBUG = True
 
 ALLOWED_HOSTS = ['team-100--delovna2526.reporun.finki.net.mk']
+CSRF_TRUSTED_ORIGINS = ['https://team-100--delovna2526.reporun.finki.net.mk']
 
 # Application definition
 
