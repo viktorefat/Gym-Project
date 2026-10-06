@@ -1,0 +1,10 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    cpus: 0.5
+    mem_limit: 512m
+    volumes:
+      - .stack-data/static:/app/static
+      - .stack-data/media:/app/media
